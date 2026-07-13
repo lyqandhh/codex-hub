@@ -1,28 +1,34 @@
 # Codex HUD Design QA
 
-- Source visual truth: `/Users/mantou/.codex/generated_images/019f594b-489e-7c63-8e1a-fb9ba95e914e/exec-097c49b1-c6ae-4134-a700-c50d28154be6.png`
-- Implementation screenshot: `qa/hud-v2.jpeg`
-- Combined comparison: `qa/comparison-v2.png`
-- Viewport: 390 × 52 pt HUD window
-- State: live quota, 98-99% weekly remaining, 3 reset credits, July 20 reset
+- Source visual truth: `/Users/mantou/.codex/generated_images/019f594b-489e-7c63-8e1a-fb9ba95e914e/exec-fc554883-ce19-460e-adeb-b5cb4713e232.png`
+- Implementation screenshot: `qa/micro-hud.jpeg`
+- Combined comparison: `qa/micro-comparison.png`
+- Viewport: 118 × 30 pt HUD window
+- State: live quota, 97% weekly remaining, 3 reset credits, July 20 reset
 
 ## Full-view comparison evidence
 
-The selected reference and implementation are shown together in `qa/comparison-v2.png`. Both use a single slim horizontal capsule, high-contrast numeric hierarchy, lightweight separators, a right-side live status dot, and a bottom quota meter. The implementation intentionally replaces the obsolete 5-hour/7-day pair with the current weekly quota, reset-credit count, and reset date while preserving the selected visual density.
+The selected micro-ring reference and implementation are shown together in `qa/micro-comparison.png`. Both use a tiny graphite capsule, a left quota ring, a two-line reset-credit/date stack, and a right-side live status dot. The implementation occupies 3,540 square points versus the previous 20,280 square points, a reduction of approximately 82.5%.
 
 ## Focused-region comparison evidence
 
-No additional crop is required because the rendered artifact is itself a 390 × 52 component capture; typography, separators, status dot, border, background, and the complete meter are readable at original size in the combined comparison.
+No additional crop is required because the rendered artifact is itself a 118 × 30 component capture. The combined comparison enlarges both artifacts equally enough to inspect ring stroke, numeric centering, two-line spacing, date legibility, status dot, border, and surface treatment.
 
 ## Required fidelity surfaces
 
-- Fonts and typography: system rounded typography matches the native macOS utility character. Weekly percentage remains the strongest element; metadata is smaller and lower contrast without becoming unreadable.
-- Spacing and layout rhythm: 18 pt horizontal padding and 15 pt inter-group spacing keep all three current data points in one scan line. The 18 pt continuous radius maintains the selected pill silhouette.
-- Colors and visual tokens: dark graphite surface, cool white text, green live indicator, and green-yellow-orange quota line match the selected direction. Low-quota warning colors are semantic and restrained.
+- Fonts and typography: system rounded typography matches the native macOS utility character. The ring value is strongest, `×3` is secondary, and `7/20` is quiet but remains readable at native scale.
+- Spacing and layout rhythm: 8 pt outer padding, a 26 pt ring, an 8 pt gap, a 30 pt two-line stack, and a 6 pt state dot fit without clipping. The 15 pt radius produces the selected micro-pill silhouette.
+- Colors and visual tokens: dark graphite surface, cool white text, semantic quota-ring colors, and a green live indicator match the selected direction without the redundant bottom gradient.
 - Image quality and asset fidelity: the HUD contains no raster illustrations, logos, or decorative image assets. Native vector shapes are appropriate for the progress meter, separators, and status indicator.
-- Copy and content: `1周 99% · 重置 ×3 · 7月20日` reflects the current Codex product model and the user's live account data.
+- Copy and content: `97`, `×3`, and `7/20` preserve all live product data while removing redundant labels and punctuation.
 
 ## Comparison history
+
+### Micro redesign — passed
+
+- Evidence: `qa/micro-hud.jpeg` and `qa/micro-comparison.png`.
+- The permanent footprint was reduced by approximately 82.5%.
+- No actionable P0, P1, or P2 differences remain; the generated presentation mock has looser padding, but the implemented 118 × 30 dimensions follow the explicitly approved specification and remain legible.
 
 ### Iteration 1 — blocked
 
