@@ -36,9 +36,11 @@ struct QuotaCapsuleView: View {
             HStack(spacing: 10) {
                 quotaRing(snapshot.remainingFraction)
                 VStack(spacing: 0) {
-                    Text(resetCredits(snapshot.resetCredits))
-                        .font(.system(size: 15, weight: .semibold, design: .rounded))
-                        .foregroundStyle(.white.opacity(0.95))
+                    if let credits = QuotaFormatting.compactCredits(snapshot.resetCredits) {
+                        Text(credits)
+                            .font(.system(size: 15, weight: .semibold, design: .rounded))
+                            .foregroundStyle(.white.opacity(0.95))
+                    }
                     Text(QuotaFormatting.compactResetDate(snapshot.resetsAt))
                         .font(.system(size: 11, weight: .medium, design: .rounded))
                         .monospacedDigit()
@@ -109,10 +111,6 @@ struct QuotaCapsuleView: View {
         default: Color(red: 0.28, green: 0.9, blue: 0.5)
         }
     }
-    private func resetCredits(_ count: Int?) -> String {
-        guard let count else { return "×--" }
-        return "×\(max(count, 0))"
-    }
     private var statusColor: Color {
         switch store.state {
         case .live: Color(red: 0.27, green: 0.93, blue: 0.54)
@@ -122,7 +120,11 @@ struct QuotaCapsuleView: View {
     }
     private var accessibilityText: String {
         guard let snapshot = store.state.snapshot else { return "Codex 额度暂不可用" }
-        return "Codex 本周剩余 \(QuotaFormatting.percent(snapshot.remainingFraction))，\(QuotaFormatting.credits(snapshot.resetCredits))，\(QuotaFormatting.resetDate(snapshot.resetsAt))重置"
+        return QuotaFormatting.accessibilitySummary(
+            remainingFraction: snapshot.remainingFraction,
+            resetCredits: snapshot.resetCredits,
+            resetsAt: snapshot.resetsAt
+        )
     }
 }
 

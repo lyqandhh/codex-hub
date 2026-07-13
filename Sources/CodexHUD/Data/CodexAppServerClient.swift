@@ -55,18 +55,30 @@ struct CodexAppServerClient: Sendable {
 struct ProcessAppServerTransport: AppServerTransport {
     var timeout: TimeInterval = 8
 
+    static func resolveCodexExecutable(
+        isExecutableFile: (String) -> Bool
+    ) -> String {
+        let bundledCandidates = [
+            "/Applications/ChatGPT.app/Contents/Resources/codex",
+            "/Applications/Codex.app/Contents/Resources/codex"
+        ]
+        return bundledCandidates.first(where: isExecutableFile) ?? "codex"
+    }
+
     func exchange(requests: [Data], responseID: Int) throws -> Data {
         let process = Process()
         let input = Pipe()
         let output = Pipe()
-        let codexPath = "/Applications/Codex.app/Contents/Resources/codex"
+        let codexExecutable = Self.resolveCodexExecutable(
+            isExecutableFile: FileManager.default.isExecutableFile(atPath:)
+        )
 
-        if FileManager.default.isExecutableFile(atPath: codexPath) {
-            process.executableURL = URL(fileURLWithPath: codexPath)
+        if codexExecutable.hasPrefix("/") {
+            process.executableURL = URL(fileURLWithPath: codexExecutable)
             process.arguments = ["app-server", "--stdio"]
         } else if FileManager.default.isExecutableFile(atPath: "/usr/bin/env") {
             process.executableURL = URL(fileURLWithPath: "/usr/bin/env")
-            process.arguments = ["codex", "app-server", "--stdio"]
+            process.arguments = [codexExecutable, "app-server", "--stdio"]
         } else {
             throw CodexAppServerError.codexNotFound
         }

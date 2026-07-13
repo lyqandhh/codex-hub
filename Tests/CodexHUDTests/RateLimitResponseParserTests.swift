@@ -3,7 +3,7 @@ import Testing
 @testable import CodexHUD
 
 struct RateLimitResponseParserTests {
-    @Test func parsesWeeklyWindowAndResetCredits() throws {
+    @Test func legacyResponseStillParsesResetCreditCount() throws {
         let reset: Int64 = 1_784_483_200
         let data = json("""
         {"id":2,"result":{"rateLimits":{"primary":{"usedPercent":1,"windowDurationMins":10080,"resetsAt":\(reset)},"secondary":null},"rateLimitResetCredits":{"availableCount":3,"credits":null}}}
@@ -28,12 +28,41 @@ struct RateLimitResponseParserTests {
         #expect(snapshot.resetCredits == 0)
     }
 
-    @Test func missingResetCreditsRemainUnknown() throws {
+    @Test func missingResetCreditFieldRemainsUnknownForCompatibility() throws {
         let data = json("""
-        {"result":{"rateLimits":{"primary":{"usedPercent":25,"windowDurationMins":10080,"resetsAt":2000}}}}
+        {"id":2,"result":{"rateLimits":{"primary":{"usedPercent":25,"windowDurationMins":10080,"resetsAt":2000},"secondary":null}}}
         """)
 
         #expect(try RateLimitResponseParser.parse(data: data).resetCredits == nil)
+    }
+
+    @Test func parsesSanitizedChatGPTCodex0144Response() throws {
+        let weeklyReset: Int64 = 1_784_483_200
+        let data = json("""
+        {
+          "id": 2,
+          "result": {
+            "rateLimits": {
+              "primary": {"usedPercent": 42, "windowDurationMins": 300, "resetsAt": 1784059200},
+              "secondary": {"usedPercent": 3, "windowDurationMins": 10080, "resetsAt": \(weeklyReset)},
+              "credits": {"hasCredits": true, "unlimited": false, "balance": "0"}
+            },
+            "rateLimitsByLimitId": {
+              "codex": {
+                "primary": {"usedPercent": 42, "windowDurationMins": 300, "resetsAt": 1784059200},
+                "secondary": {"usedPercent": 3, "windowDurationMins": 10080, "resetsAt": \(weeklyReset)}
+              }
+            },
+            "rateLimitResetCredits": {"availableCount": 2, "credits": null}
+          }
+        }
+        """)
+
+        let snapshot = try RateLimitResponseParser.parse(data: data)
+
+        #expect(snapshot.remainingFraction == 0.97)
+        #expect(snapshot.resetsAt == Date(timeIntervalSince1970: TimeInterval(weeklyReset)))
+        #expect(snapshot.resetCredits == 2)
     }
 
     @Test func invalidUsedPercentageIsClamped() throws {

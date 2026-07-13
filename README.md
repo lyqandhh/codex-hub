@@ -20,7 +20,7 @@
 | 元素 | 含义 |
 | --- | --- |
 | 圆环与数字 | 本周剩余额度百分比；绿色为充足，黄色为低于 50%，橙红色为低于 20% |
-| `×3` | 当前可用的额度重置次数 |
+| `×3` | 当前可用的额度重置次数；Codex 未返回该字段时隐藏 |
 | `7/20` | 下次额度重置日期；不足 24 小时时显示剩余小时数 |
 | 右侧圆点 | 绿色：最新数据；黄色：暂时使用上次成功数据；灰色：正在读取或暂不可用 |
 
@@ -34,10 +34,10 @@
 
 1. 解压下载的 ZIP。
 2. 将 `Codex HUD.app` 拖入“应用程序”文件夹。
-3. 确保官方 Codex 桌面应用已安装，并已登录账号。
+3. 确保官方 ChatGPT 桌面应用已安装，并已登录 Codex 账号。
 4. 首次启动 `Codex HUD.app`。
 
-> 系统要求：macOS 14 Sonoma 或更高版本；`/Applications/Codex.app` 已安装。
+> 系统要求：macOS 14 Sonoma 或更高版本；`/Applications/ChatGPT.app` 已安装并登录。仍兼容旧版 `/Applications/Codex.app` 和 PATH 中的 `codex` CLI。
 
 ### 首次启动被 macOS 拦截
 
@@ -74,8 +74,8 @@ xattr -dr com.apple.quarantine "/Applications/Codex HUD.app"
 
 请依次确认：
 
-1. 官方 Codex 桌面应用已安装在 `/Applications/Codex.app`。
-2. Codex 已登录账号，且能在其设置中看到额度。
+1. 官方 ChatGPT 桌面应用已安装在 `/Applications/ChatGPT.app`（或使用旧版 `/Applications/Codex.app`）。
+2. ChatGPT/Codex 已登录账号，且能在其设置中看到额度。
 3. 退出并重新启动 Codex HUD。
 
 ### 悬浮组件挡住了点击
@@ -92,11 +92,13 @@ xattr -dr com.apple.quarantine "/Applications/Codex HUD.app"
 
 ## 隐私与安全
 
-Codex HUD 仅启动官方 Codex 应用内置的本机命令：
+Codex HUD 仅启动官方 ChatGPT/Codex 应用内置的本机命令。当前版本优先使用：
 
 ```text
-/Applications/Codex.app/Contents/Resources/codex app-server --stdio
+/Applications/ChatGPT.app/Contents/Resources/codex app-server --stdio
 ```
+
+若不存在，再依次尝试旧版 `/Applications/Codex.app/Contents/Resources/codex` 和 PATH 中的 `codex`。
 
 它只发送 `initialize` 和只读的 `account/rateLimits/read` 请求。应用不会：
 
