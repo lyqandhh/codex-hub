@@ -1,0 +1,5 @@
+.build/
+dist/
+.worktrees/
+.DS_Store
+*.xcuserstate
