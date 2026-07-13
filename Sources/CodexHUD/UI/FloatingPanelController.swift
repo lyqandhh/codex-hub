@@ -76,7 +76,13 @@ final class FloatingPanelController: NSWindowController, NSWindowDelegate {
             onTogglePassthrough: { [weak self] in self?.toggleMousePassthrough() },
             onResetPosition: { [weak self] in self?.resetPosition() }
         )
-        window?.contentView = NSHostingView(rootView: view)
+        let hostingView = NSHostingView(rootView: view)
+        hostingView.wantsLayer = true
+        hostingView.layer?.backgroundColor = NSColor.clear.cgColor
+        hostingView.layer?.cornerRadius = HUDLayout.cornerRadius
+        hostingView.layer?.cornerCurve = .continuous
+        hostingView.layer?.masksToBounds = true
+        window?.contentView = hostingView
     }
 
     private func restorePosition() {

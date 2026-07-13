@@ -24,6 +24,15 @@ No additional crop is required because the implementation is a direct 118 × 46 
 
 ## Comparison history
 
+### Transparent-corner correction — passed
+
+- Earlier finding: the AppKit visual-effect hosting surface was not masked, leaving a rectangular gray backing visible outside the SwiftUI rounded capsule.
+- Root cause evidence: the hosting layer reported `masksToBounds=false`, `cornerRadius=0`, and no explicit clear background.
+- Fix: configured the native `NSHostingView` layer with a clear background, 18 pt continuous corner radius, and `masksToBounds=true`.
+- Post-fix evidence: `qa/transparent-corners.jpeg`; the four outer corners now reveal the underlying screen instead of a gray rectangle.
+- Automated regression: `FloatingPanelTransparencyTests.hostingSurfaceMasksVisualEffectToRoundedCorners`.
+- No actionable P0, P1, or P2 transparency issues remain.
+
 ### Aspect-ratio correction — passed
 
 - Earlier finding: the approved visual was approximately 2.55:1, while the first implementation was 118 × 30 or 3.93:1, producing an overly flat and wide chip.
