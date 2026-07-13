@@ -14,16 +14,16 @@ struct QuotaCapsuleView: View {
             Color(red: 0.025, green: 0.03, blue: 0.045).opacity(0.82)
 
             content
-                .padding(.horizontal, 8)
+                .padding(.horizontal, 10)
         }
-        .clipShape(RoundedRectangle(cornerRadius: 15, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
         .overlay {
-            RoundedRectangle(cornerRadius: 15, style: .continuous)
+            RoundedRectangle(cornerRadius: 18, style: .continuous)
                 .stroke(Color.white.opacity(0.15), lineWidth: 0.8)
         }
         .shadow(color: .black.opacity(0.28), radius: 8, y: 4)
         .opacity(preferences.opacity)
-        .contentShape(RoundedRectangle(cornerRadius: 15, style: .continuous))
+        .contentShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
         .onTapGesture(count: 2, perform: onTogglePassthrough)
         .contextMenu { contextMenu }
         .accessibilityElement(children: .combine)
@@ -33,18 +33,18 @@ struct QuotaCapsuleView: View {
     @ViewBuilder
     private var content: some View {
         if let snapshot = store.state.snapshot {
-            HStack(spacing: 8) {
+            HStack(spacing: 10) {
                 quotaRing(snapshot.remainingFraction)
                 VStack(spacing: 0) {
                     Text(resetCredits(snapshot.resetCredits))
-                        .font(.system(size: 13, weight: .semibold, design: .rounded))
+                        .font(.system(size: 15, weight: .semibold, design: .rounded))
                         .foregroundStyle(.white.opacity(0.95))
                     Text(QuotaFormatting.compactResetDate(snapshot.resetsAt))
-                        .font(.system(size: 9, weight: .medium, design: .rounded))
+                        .font(.system(size: 11, weight: .medium, design: .rounded))
                         .monospacedDigit()
                         .foregroundStyle(.white.opacity(0.58))
                 }
-                .frame(minWidth: 30)
+                .frame(minWidth: 28)
                 statusDot
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
@@ -63,24 +63,24 @@ struct QuotaCapsuleView: View {
     private func quotaRing(_ remaining: Double) -> some View {
         ZStack {
             Circle()
-                .stroke(Color.white.opacity(0.14), lineWidth: 2.2)
+                .stroke(Color.white.opacity(0.14), lineWidth: 2.4)
             Circle()
                 .trim(from: 0, to: min(max(remaining, 0), 1))
-                .stroke(progressColor, style: StrokeStyle(lineWidth: 2.2, lineCap: .round))
+                .stroke(progressColor, style: StrokeStyle(lineWidth: 2.4, lineCap: .round))
                 .rotationEffect(.degrees(-90))
                 .animation(.easeOut(duration: 0.35), value: remaining)
             Text(QuotaFormatting.ringValue(remaining))
-                .font(.system(size: 10, weight: .semibold, design: .rounded))
+                .font(.system(size: 14, weight: .semibold, design: .rounded))
                 .monospacedDigit()
                 .foregroundStyle(.white)
         }
-        .frame(width: 26, height: 26)
+        .frame(width: HUDLayout.ringDiameter, height: HUDLayout.ringDiameter)
     }
 
     private var statusDot: some View {
         Circle()
             .fill(statusColor)
-            .frame(width: 6, height: 6)
+            .frame(width: 7, height: 7)
             .shadow(color: statusColor.opacity(0.5), radius: 2)
     }
 

@@ -1,28 +1,36 @@
 # Codex HUD Design QA
 
-- Source visual truth: `/Users/mantou/.codex/generated_images/019f594b-489e-7c63-8e1a-fb9ba95e914e/exec-fc554883-ce19-460e-adeb-b5cb4713e232.png`
-- Implementation screenshot: `qa/micro-hud.jpeg`
-- Combined comparison: `qa/micro-comparison.png`
-- Viewport: 118 × 30 pt HUD window
-- State: live quota, 97% weekly remaining, 3 reset credits, July 20 reset
+- Source visual truth: `/var/folders/4d/t48gkmhj47n6nxcf_m7mbdkc0000gp/T/codex-clipboard-27341380-58de-4edf-a125-0d7f234b2910.png`
+- Implementation screenshot: `qa/aspect-fixed-hud.jpeg`
+- Combined comparison: `qa/aspect-comparison.png`
+- Viewport: 118 × 46 pt HUD window
+- State: live quota, 96% weekly remaining, 3 reset credits, July 20 reset
 
 ## Full-view comparison evidence
 
-The selected micro-ring reference and implementation are shown together in `qa/micro-comparison.png`. Both use a tiny graphite capsule, a left quota ring, a two-line reset-credit/date stack, and a right-side live status dot. The implementation occupies 3,540 square points versus the previous 20,280 square points, a reduction of approximately 82.5%.
+The user-provided design crop and corrected implementation are shown at the same height in `qa/aspect-comparison.png`. Both now use an approximately 2.56:1 rounded rectangle, a left quota ring occupying about 70% of the height, a two-line reset-credit/date stack, and a right-side live status dot. The corrected implementation occupies 5,428 square points versus the original 20,280 square points, a reduction of approximately 73.2%.
 
 ## Focused-region comparison evidence
 
-No additional crop is required because the rendered artifact is itself a 118 × 30 component capture. The combined comparison enlarges both artifacts equally enough to inspect ring stroke, numeric centering, two-line spacing, date legibility, status dot, border, and surface treatment.
+No additional crop is required because the implementation is a direct 118 × 46 component capture and the user-provided design was cropped to its exact visible widget bounds. Both are normalized to 133 px height in the combined comparison.
 
 ## Required fidelity surfaces
 
 - Fonts and typography: system rounded typography matches the native macOS utility character. The ring value is strongest, `×3` is secondary, and `7/20` is quiet but remains readable at native scale.
-- Spacing and layout rhythm: 8 pt outer padding, a 26 pt ring, an 8 pt gap, a 30 pt two-line stack, and a 6 pt state dot fit without clipping. The 15 pt radius produces the selected micro-pill silhouette.
+- Spacing and layout rhythm: 10 pt outer padding, a 32 pt ring, 10 pt gaps, a compact two-line stack, and a 7 pt state dot fit without clipping. The corrected 118 × 46 frame matches the approved design's visible aspect ratio.
 - Colors and visual tokens: dark graphite surface, cool white text, semantic quota-ring colors, and a green live indicator match the selected direction without the redundant bottom gradient.
 - Image quality and asset fidelity: the HUD contains no raster illustrations, logos, or decorative image assets. Native vector shapes are appropriate for the progress meter, separators, and status indicator.
 - Copy and content: `97`, `×3`, and `7/20` preserve all live product data while removing redundant labels and punctuation.
 
 ## Comparison history
+
+### Aspect-ratio correction — passed
+
+- Earlier finding: the approved visual was approximately 2.55:1, while the first implementation was 118 × 30 or 3.93:1, producing an overly flat and wide chip.
+- Root cause: implementation followed numeric dimensions written in the generation prompt even though the generated visual did not render those proportions.
+- Fix: changed the window to 118 × 46, the ring to 32 pt, and scaled typography and spacing to the corrected height.
+- Post-fix evidence: `qa/aspect-fixed-hud.jpeg` and `qa/aspect-comparison.png`.
+- No actionable P0, P1, or P2 aspect or sizing differences remain.
 
 ### Micro redesign — passed
 
