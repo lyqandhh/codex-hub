@@ -6,6 +6,11 @@ enum QuotaFormatting {
         return "\(Int((clamped * 100).rounded()))%"
     }
 
+    static func ringValue(_ fraction: Double) -> String {
+        let clamped = min(max(fraction, 0), 1)
+        return "\(Int((clamped * 100).rounded()))"
+    }
+
     static func credits(_ count: Int?) -> String {
         guard let count else { return "重置 --" }
         return "重置 ×\(max(count, 0))"
@@ -28,6 +33,21 @@ enum QuotaFormatting {
         formatter.timeZone = calendar.timeZone
         formatter.locale = Locale(identifier: "zh_CN")
         formatter.dateFormat = resetYear == currentYear ? "M月d日" : "yyyy年M月d日"
+        return formatter.string(from: date)
+    }
+
+    static func compactResetDate(
+        _ date: Date,
+        now: Date = .now,
+        calendar: Calendar = .current
+    ) -> String {
+        let resetYear = calendar.component(.year, from: date)
+        let currentYear = calendar.component(.year, from: now)
+        let formatter = DateFormatter()
+        formatter.calendar = calendar
+        formatter.timeZone = calendar.timeZone
+        formatter.locale = Locale(identifier: "zh_CN")
+        formatter.dateFormat = resetYear == currentYear ? "M/d" : "yy/M/d"
         return formatter.string(from: date)
     }
 }

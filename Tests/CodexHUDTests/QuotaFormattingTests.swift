@@ -9,6 +9,20 @@ struct QuotaFormattingTests {
         #expect(QuotaFormatting.percent(1.4) == "100%")
     }
 
+    @Test func ringValueDropsPercentSign() {
+        #expect(QuotaFormatting.ringValue(0.984) == "98")
+        #expect(QuotaFormatting.ringValue(1.4) == "100")
+    }
+
+    @Test func compactResetDateUsesShortNumericFormat() {
+        let calendar = utcCalendar
+        let now = calendar.date(from: DateComponents(year: 2026, month: 7, day: 13))!
+        let sameYear = calendar.date(from: DateComponents(year: 2026, month: 7, day: 20))!
+        let nextYear = calendar.date(from: DateComponents(year: 2027, month: 1, day: 2))!
+        #expect(QuotaFormatting.compactResetDate(sameYear, now: now, calendar: calendar) == "7/20")
+        #expect(QuotaFormatting.compactResetDate(nextYear, now: now, calendar: calendar) == "27/1/2")
+    }
+
     @Test func resetCreditsDistinguishZeroFromMissing() {
         #expect(QuotaFormatting.credits(3) == "重置 ×3")
         #expect(QuotaFormatting.credits(0) == "重置 ×0")
