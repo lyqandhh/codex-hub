@@ -8,7 +8,7 @@ let package = Package(
         .library(name: "CodexHUD", targets: ["CodexHUD"])
     ],
     targets: [
-        .executableTarget(name: "CodexHUD"),
+        .target(name: "CodexHUD"),
         .testTarget(name: "CodexHUDTests", dependencies: ["CodexHUD"])
     ]
 )
