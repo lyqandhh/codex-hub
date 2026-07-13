@@ -4,7 +4,7 @@ import SwiftUI
 
 @MainActor
 final class FloatingPanelController: NSWindowController, NSWindowDelegate {
-    static let size = NSSize(width: 390, height: 52)
+    static let size = NSSize(width: 118, height: 30)
 
     private let store: QuotaStore
     private let preferences: PreferencesStore
