@@ -71,11 +71,10 @@ final class FloatingPanelController: NSWindowController, NSWindowDelegate {
         let view = QuotaCapsuleView(
             store: store,
             preferences: preferences,
+            loginItemManager: loginItemManager,
             onRefresh: { [weak store] in Task { await store?.refresh() } },
             onTogglePassthrough: { [weak self] in self?.toggleMousePassthrough() },
-            onResetPosition: { [weak self] in self?.resetPosition() },
-            onToggleLaunchAtLogin: { [weak self] in self?.loginItemManager.toggle() },
-            launchAtLoginEnabled: loginItemManager.isEnabled
+            onResetPosition: { [weak self] in self?.resetPosition() }
         )
         window?.contentView = NSHostingView(rootView: view)
     }

@@ -1,9 +1,10 @@
 import AppKit
+import Combine
 import ServiceManagement
 
 @MainActor
-final class LoginItemManager {
-    var isEnabled: Bool { SMAppService.mainApp.status == .enabled }
+final class LoginItemManager: ObservableObject {
+    @Published private(set) var isEnabled = SMAppService.mainApp.status == .enabled
 
     func toggle() {
         do {
@@ -12,6 +13,7 @@ final class LoginItemManager {
             } else {
                 try SMAppService.mainApp.register()
             }
+            isEnabled = SMAppService.mainApp.status == .enabled
         } catch {
             NSSound.beep()
         }

@@ -3,16 +3,15 @@ import SwiftUI
 struct QuotaCapsuleView: View {
     @ObservedObject var store: QuotaStore
     @ObservedObject var preferences: PreferencesStore
+    @ObservedObject var loginItemManager: LoginItemManager
     let onRefresh: () -> Void
     let onTogglePassthrough: () -> Void
     let onResetPosition: () -> Void
-    let onToggleLaunchAtLogin: () -> Void
-    let launchAtLoginEnabled: Bool
 
     var body: some View {
         ZStack(alignment: .bottomLeading) {
             VisualEffectView(material: .hudWindow, blendingMode: .behindWindow)
-            Color.black.opacity(0.42)
+            Color(red: 0.025, green: 0.03, blue: 0.045).opacity(0.82)
 
             content
                 .padding(.horizontal, 18)
@@ -20,7 +19,7 @@ struct QuotaCapsuleView: View {
 
             GeometryReader { proxy in
                 Capsule()
-                    .fill(progressColor)
+                    .fill(progressFill)
                     .frame(width: proxy.size.width * progress, height: 3)
                     .shadow(color: progressColor.opacity(0.5), radius: 3)
                     .animation(.easeOut(duration: 0.35), value: progress)
@@ -49,11 +48,11 @@ struct QuotaCapsuleView: View {
                 separator
                 Text(QuotaFormatting.credits(snapshot.resetCredits))
                     .font(.system(size: 15, weight: .semibold, design: .rounded))
-                    .foregroundStyle(.white.opacity(0.88))
+                    .foregroundStyle(.white.opacity(0.94))
                 separator
                 Text(QuotaFormatting.resetDate(snapshot.resetsAt))
                     .font(.system(size: 14, weight: .medium, design: .rounded))
-                    .foregroundStyle(.white.opacity(0.62))
+                    .foregroundStyle(.white.opacity(0.72))
                 statusDot
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -101,7 +100,9 @@ struct QuotaCapsuleView: View {
                 Button("\(Int(value * 100))%") { preferences.opacity = value }
             }
         }
-        Button(launchAtLoginEnabled ? "关闭登录时启动" : "登录时启动", action: onToggleLaunchAtLogin)
+        Button(loginItemManager.isEnabled ? "关闭登录时启动" : "登录时启动") {
+            loginItemManager.toggle()
+        }
         Button("恢复默认位置", action: onResetPosition)
         Divider()
         Button("退出 Codex HUD") { NSApplication.shared.terminate(nil) }
@@ -114,6 +115,15 @@ struct QuotaCapsuleView: View {
         case ..<0.5: Color(red: 1, green: 0.72, blue: 0.18)
         default: Color(red: 0.28, green: 0.9, blue: 0.5)
         }
+    }
+    private var progressFill: some ShapeStyle {
+        LinearGradient(
+            colors: progress < 0.2
+                ? [Color(red: 1, green: 0.25, blue: 0.18), Color(red: 1, green: 0.48, blue: 0.16)]
+                : [Color(red: 0.24, green: 0.96, blue: 0.48), Color(red: 0.92, green: 0.93, blue: 0.18), Color(red: 1, green: 0.48, blue: 0.08)],
+            startPoint: .leading,
+            endPoint: .trailing
+        )
     }
     private var statusColor: Color {
         switch store.state {
