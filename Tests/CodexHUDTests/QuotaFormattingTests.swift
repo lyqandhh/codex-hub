@@ -29,6 +29,55 @@ struct QuotaFormattingTests {
         #expect(QuotaFormatting.credits(nil) == "重置 --")
     }
 
+    @Test func compactCreditsOmitUnknownValueInsteadOfShowingPlaceholder() {
+        #expect(QuotaFormatting.compactCredits(nil) == nil)
+        #expect(QuotaFormatting.compactCredits(3) == "×3")
+        #expect(QuotaFormatting.compactCredits(0) == "×0")
+    }
+
+    @Test func accessibilitySummaryOmitsUnknownResetCreditPlaceholder() {
+        let calendar = utcCalendar
+        let now = calendar.date(from: DateComponents(year: 2026, month: 7, day: 13))!
+        let reset = calendar.date(from: DateComponents(year: 2026, month: 7, day: 20))!
+
+        let summary = QuotaFormatting.accessibilitySummary(
+            remainingFraction: 0.97,
+            resetCredits: nil,
+            resetsAt: reset,
+            now: now,
+            calendar: calendar
+        )
+
+        #expect(summary.contains("本周剩余 97%"))
+        #expect(summary.contains("7月20日"))
+        #expect(!summary.contains("--"))
+        #expect(!summary.contains("重置 ×"))
+    }
+
+    @Test func accessibilitySummaryKeepsKnownResetCreditCounts() {
+        let calendar = utcCalendar
+        let now = calendar.date(from: DateComponents(year: 2026, month: 7, day: 13))!
+        let reset = calendar.date(from: DateComponents(year: 2026, month: 7, day: 20))!
+
+        let zero = QuotaFormatting.accessibilitySummary(
+            remainingFraction: 0.97,
+            resetCredits: 0,
+            resetsAt: reset,
+            now: now,
+            calendar: calendar
+        )
+        let two = QuotaFormatting.accessibilitySummary(
+            remainingFraction: 0.97,
+            resetCredits: 2,
+            resetsAt: reset,
+            now: now,
+            calendar: calendar
+        )
+
+        #expect(zero.contains("重置 ×0"))
+        #expect(two.contains("重置 ×2"))
+    }
+
     @Test func resetDateUsesRelativeHoursWithinOneDay() {
         let now = Date(timeIntervalSince1970: 1_700_000_000)
         let reset = now.addingTimeInterval(18 * 3600 + 20 * 60)

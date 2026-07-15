@@ -16,6 +16,26 @@ enum QuotaFormatting {
         return "重置 ×\(max(count, 0))"
     }
 
+    static func compactCredits(_ count: Int?) -> String? {
+        guard let count else { return nil }
+        return "×\(max(count, 0))"
+    }
+
+    static func accessibilitySummary(
+        remainingFraction: Double,
+        resetCredits: Int?,
+        resetsAt: Date,
+        now: Date = .now,
+        calendar: Calendar = .current
+    ) -> String {
+        var details = ["Codex 本周剩余 \(percent(remainingFraction))"]
+        if let credits = compactCredits(resetCredits) {
+            details.append("重置 \(credits)")
+        }
+        details.append("\(resetDate(resetsAt, now: now, calendar: calendar))重置")
+        return details.joined(separator: "，")
+    }
+
     static func resetDate(
         _ date: Date,
         now: Date = .now,
